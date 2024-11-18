@@ -1,11 +1,10 @@
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .serializers import UserSerializer, JiraniIssueSerializer, AnnouncementSerializer, NotificationSerializer
+from .serializers import UserSerializer, JiraniIssueSerializer, AnnouncementSerializer
 from users.models import User
 from issues.models import JiraniIssue
 from announcements.models import Announcement
-from notifications.models import Notification
 from rest_framework.parsers import MultiPartParser, FormParser
 
 
@@ -58,23 +57,6 @@ class UserDetailView(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 # ---- Issue Views ----
-class IssueListCreateView(APIView):
-    """
-    API view for listing and creating issues.
-    """
-    def get(self, request):
-        issues = JiraniIssue.objects.all()
-        serializer = JiraniIssueSerializer(issues, many=True)
-        return Response({'data': serializer.data}, status=status.HTTP_200_OK)
-
-    def post(self, request):
-
-        serializer = JiraniIssueSerializer(data=request.data, context={'request': request})
-        if serializer.is_valid():
-            serializer.save()
-            return Response({'data': serializer.data}, status=status.HTTP_201_CREATED)
-        return Response({'errors': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
-
 class IssueDetailView(APIView):
     """
     API view for retrieving, updating, and deleting issues.
@@ -106,6 +88,24 @@ class IssueDetailView(APIView):
         issue.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+class IssueListCreateView(APIView):
+    """
+    API view for listing and creating issues.
+    """
+    def get(self, request):
+        issues = JiraniIssue.objects.all()
+        serializer = JiraniIssueSerializer(issues, many=True)
+        return Response({'data': serializer.data}, status=status.HTTP_200_OK)
+
+    def post(self, request):
+        serializer = JiraniIssueSerializer(data=request.data, context={'request': request})
+        if serializer.is_valid():
+            serializer.save()
+            return Response({'data': serializer.data}, status=status.HTTP_201_CREATED)
+        return Response({'errors': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+
+        
 # ---- Announcement Views ----
 class AnnouncementListCreateView(APIView):
     """
@@ -168,43 +168,3 @@ class AnnouncementDetailView(APIView):
         announcement.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-# ---- Notification Views ----
-class NotificationListView(APIView):
-    """
-    API view for listing notifications.
-    """
-    def get(self, request):
-        notifications = Notification.objects.all()
-        serializer = NotificationSerializer(notifications, many=True)
-        return Response({'data': serializer.data}, status=status.HTTP_200_OK)
-
-class NotificationDetailView(APIView):
-    """
-    API view for retrieving, updating, and deleting notifications.
-    """
-    def get(self, request, pk):
-        try:
-            notification = Notification.objects.get(pk=pk)
-        except Notification.DoesNotExist:
-            return Response({'errors': 'Notification not found'}, status=status.HTTP_404_NOT_FOUND)
-        serializer = NotificationSerializer(notification)
-        return Response({'data': serializer.data}, status=status.HTTP_200_OK)
-
-    def put(self, request, pk):
-        try:
-            notification = Notification.objects.get(pk=pk)
-        except Notification.DoesNotExist:
-            return Response({'errors': 'Notification not found'}, status=status.HTTP_404_NOT_FOUND)
-        serializer = NotificationSerializer(notification, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response({'data': serializer.data}, status=status.HTTP_200_OK)
-        return Response({'errors': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
-
-    def delete(self, request, pk):
-        try:
-            notification = Notification.objects.get(pk=pk)
-        except Notification.DoesNotExist:
-            return Response({'errors': 'Notification not found'}, status=status.HTTP_404_NOT_FOUND)
-        notification.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)

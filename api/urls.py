@@ -3,7 +3,6 @@ from .views import (
     UserListView, UserDetailView,
     IssueListCreateView, IssueDetailView,
     AnnouncementListCreateView, AnnouncementDetailView,
-    NotificationListView, NotificationDetailView, 
 )
 
 urlpatterns = [
@@ -19,8 +18,5 @@ urlpatterns = [
     path('announcements/', AnnouncementListCreateView.as_view(), name='announcement-list-create'),
     path('announcements/<int:pk>/', AnnouncementDetailView.as_view(), name='announcement-detail'),
     
-    # Notification endpoints
-    path('notifications/', NotificationListView.as_view(), name='notification-list'),
-    path('notifications/<int:pk>/', NotificationDetailView.as_view(), name='notification-detail'),
 ]
 

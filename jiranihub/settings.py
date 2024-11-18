@@ -47,7 +47,6 @@ INSTALLED_APPS = [
     'users', 
     'issues',  
     'announcements', 
-    'notifications',
     'corsheaders',
 ]
 
@@ -63,7 +62,7 @@ MIDDLEWARE = [
 ]
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3001",  # React app's URL
+    "http://localhost:3000",  # React app's URL
 ]
 
 ROOT_URLCONF = 'jiranihub.urls'
